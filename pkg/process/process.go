@@ -13,17 +13,17 @@ import (
 )
 
 // Embed embeds the Secret's data into the source file and writes it to the output directory
-func Embed(secret *Secret) error {
+func Embed(secret *Secret) (string, error) {
 	var loadedImage image.Image
 	// Read the Source file
 	sourceFile, err := os.Open(secret.SourcePath)
 	if err != nil {
-		return fmt.Errorf("Error reading Source file: (%v)", err)
+		return "", fmt.Errorf("Error reading Source file: (%v)", err)
 	}
 	defer sourceFile.Close()
 	loadedImage, format, err := image.Decode(sourceFile)
 	if err != nil {
-		return fmt.Errorf("Error decoding source file: (%v)", err)
+		return "", fmt.Errorf("Error decoding source file: (%v)", err)
 	}
 	// Reset the file's reader to beginning
 	sourceFile.Seek(0, 0)
@@ -36,94 +36,94 @@ func Embed(secret *Secret) error {
 		// ====
 		loadedImage, err = png.Decode(sourceFile)
 		if err != nil {
-			return fmt.Errorf("Error decoding PNG file: (%v)", err)
+			return "", fmt.Errorf("Error decoding PNG file: (%v)", err)
 		}
 		embedded, err := EmbedMsgInImage(secret, loadedImage)
 		if err != nil {
-			return fmt.Errorf("Error embedding message in file: (%v)", err)
+			return "", fmt.Errorf("Error embedding message in file: (%v)", err)
 		}
 		newFile, err := os.Create(filepath.Join(secret.OutputDir, "output."+format))
 		if err != nil {
-			return fmt.Errorf("Error creating output file: (%v)", err)
+			return "", fmt.Errorf("Error creating output file: (%v)", err)
 		}
 		defer newFile.Close()
 		err = png.Encode(newFile, embedded)
 		if err != nil {
-			return fmt.Errorf("Error encoding new PNG image: (%v)", err)
+			return "", fmt.Errorf("Error encoding new PNG image: (%v)", err)
 		}
-		return nil
+		return filepath.Join(secret.OutputDir, "output."+format), nil
 	} else if format == "jpeg" {
 		// =====
 		// Handle JPEG
 		// ====
 		loadedImage, err = jpeg.Decode(sourceFile)
 		if err != nil {
-			return fmt.Errorf("Error decoding JPEG file: (%v)", err)
+			return "", fmt.Errorf("Error decoding JPEG file: (%v)", err)
 		}
 		embedded, err := EmbedMsgInImage(secret, loadedImage)
 		if err != nil {
-			return fmt.Errorf("Error embedding message in file: (%v)", err)
+			return "", fmt.Errorf("Error embedding message in file: (%v)", err)
 		}
 		newFile, err := os.Create(filepath.Join(secret.OutputDir, "output_"+format+".png"))
 		if err != nil {
-			return fmt.Errorf("Error creating output file: (%v)", err)
+			return "", fmt.Errorf("Error creating output file: (%v)", err)
 		}
 		defer newFile.Close()
 		err = png.Encode(newFile, embedded)
 		if err != nil {
-			return fmt.Errorf("Error encoding new JPEG image: (%v)", err)
+			return "", fmt.Errorf("Error encoding new JPEG image: (%v)", err)
 		}
-		return nil
+		return filepath.Join(secret.OutputDir, "output_"+format+".png"), nil
 	} else if format == "bmp" {
 		// =====
 		// Handle BMP
 		// ====
 		loadedImage, err = bmp.Decode(sourceFile)
 		if err != nil {
-			return fmt.Errorf("Error decoding BMP file: (%v)", err)
+			return "", fmt.Errorf("Error decoding BMP file: (%v)", err)
 		}
 		embedded, err := EmbedMsgInImage(secret, loadedImage)
 		if err != nil {
-			return fmt.Errorf("Error embedding message in file: (%v)", err)
+			return "", fmt.Errorf("Error embedding message in file: (%v)", err)
 		}
 		newFile, err := os.Create(filepath.Join(secret.OutputDir, "output."+format))
 		if err != nil {
-			return fmt.Errorf("Error creating output file: (%v)", err)
+			return "", fmt.Errorf("Error creating output file: (%v)", err)
 		}
 		defer newFile.Close()
 		err = bmp.Encode(newFile, embedded)
 		if err != nil {
-			return fmt.Errorf("Error encoding new JPEG image: (%v)", err)
+			return "", fmt.Errorf("Error encoding new JPEG image: (%v)", err)
 		}
-		return nil
+		return filepath.Join(secret.OutputDir, "output."+format), nil
 	} else if format == "gif" {
 		// =====
 		// Handle GIF
 		// ====
 		loadedGIF, err := gif.DecodeAll(sourceFile)
 		if err != nil {
-			return fmt.Errorf("Error decoding GIF file: (%v)", err)
+			return "", fmt.Errorf("Error decoding GIF file: (%v)", err)
 		}
 		embedded, err := EmbedMsgInGIF(secret, loadedGIF)
 		if err != nil {
-			return fmt.Errorf("Error embedding message in file: (%v)", err)
+			return "", fmt.Errorf("Error embedding message in file: (%v)", err)
 		}
 		newFile, err := os.Create(filepath.Join(secret.OutputDir, "output."+format))
 		if err != nil {
-			return fmt.Errorf("Error creating output file: (%v)", err)
+			return "", fmt.Errorf("Error creating output file: (%v)", err)
 		}
 		defer newFile.Close()
 		err = gif.EncodeAll(newFile, embedded)
 		if err != nil {
-			return err
+			return "", err
 		}
 	} else {
 		// =====
 		// Handle ???
 		// ====
-		return fmt.Errorf("Unsupported source file format: %v", format)
+		return "", fmt.Errorf("Unsupported source file format: %v", format)
 	}
-	return nil
+	return "", nil
 }
 
 // Extract extracts the Secret's data and writes it to the output directory

@@ -1,7 +1,7 @@
 package lsbserver
 
 import (
-	"net/http"
+	"lsb_encoder/pkg/api"
 
 	"github.com/spf13/cobra"
 )
@@ -15,14 +15,10 @@ var ServerCommand = &cobra.Command{
 }
 
 func serverCommandFunction(command *cobra.Command, args []string) (err error) {
-	server := &http.Server{
-		Addr:    "",
-		Handler: nil,
+	s := api.NewServer("8080")
+	s.Logger.Infof("Server starting, listening on http://localhost:8080")
+	if err := s.Server.ListenAndServe(); err != nil {
+		panic(err)
 	}
-	go func() {
-		if err := server.ListenAndServe(); err != nil {
-			panic(err)
-		}
-	}()
-	return err
+	return nil
 }
