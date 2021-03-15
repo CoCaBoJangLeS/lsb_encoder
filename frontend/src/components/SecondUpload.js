@@ -1,15 +1,15 @@
 import React from 'react'
 import upload from '../media/upload.png'
 
-const Upload = () => {
+const SecondUpload = () => {
   return (
     <div className="upload">
       <div className="row">
         <div className="col-1">
-          <h2>1</h2>
+          <h2>3</h2>
         </div>
         <div className="col-11">
-        <h6>add your message with this upload</h6>
+        <h6>or another upload</h6>
           <div className="uploadBox">
             <div className="row">
             <div className="col-6">
@@ -33,4 +33,4 @@ const Upload = () => {
   )
 }
 
-export default Upload
+export default SecondUpload
