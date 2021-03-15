@@ -21,7 +21,12 @@ const Upload = () => {
             <p>Drag and Drop or</p>
             </div> 
             <div className="col-6 select">
-              <button>Select from your computer</button><br />
+              <input
+                type="file"
+                text="Select from your computer"
+                className="button"
+                />
+              <br />
               <small>please use .jpeg .png or .bmp</small>
             </div>
             </div>
