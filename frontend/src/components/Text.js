@@ -1,6 +1,23 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 const Text = () => {
+
+  const [stuff, setStuff] = useState('say something')
+  const [message, setMessage] = useState("")
+
+  const handleOnFocus = () => {
+    setStuff("")
+  }
+
+  const handleOnBlur = () => {
+    setStuff("neat")
+  }
+
+  const handleOnChange = (e) => {
+    let userTyped = e.target.value
+    setMessage(userTyped)
+  }
+
   return (
     <div className="upload">
       <div className="row">
@@ -12,9 +29,13 @@ const Text = () => {
           <div className="row">
             <div className="col-6">
               <input 
-                placeholder="type something cool here"
+                placeholder={stuff}
+                value={message}
                 className="inputText"
                 type="text"
+                onBlur={handleOnBlur}
+                onFocus={handleOnFocus}
+                onChange={handleOnChange}
                 >
               </input>
             </div> 

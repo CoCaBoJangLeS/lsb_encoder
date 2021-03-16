@@ -19,6 +19,17 @@ h1 {
   margin: 0;
 }
 
+span li {
+  display: inline-block;
+  padding: 10px;
+  margin-top:30px;
+  float: right;
+}
+
+li a {
+  text-decoration: none;
+}
+
 h2 {
   font-size: 60px;
   font-weight: 800;
@@ -45,8 +56,34 @@ h6 {
 }
 
 .uploadBox {
-  text-align: center;
-  
+  text-align: center; 
+}
+
+label.uploadButton input[type="file"] {
+  display: none;
+}
+
+/***** Example custom styling *****/
+.uploadButton {
+  border-radius: 4px;
+  padding: 10px 10px;
+  margin-top: 30px;
+  background: #464fcb;
+  display: inline-block;
+  color: #f6d9d3;
+}
+.uploadButton:hover {
+  background: transparent;
+  border: 1px solid #464fcb;
+  color: #464fcb!important;
+}
+
+h3 {
+  color: #464fcb;
+  margin-left:85px;
+  font-size: 30px;
+  font-weight: 300!important;
+  font-family: 'Open Sans', sans-serif;
 }
 
 .uploadBox p {
