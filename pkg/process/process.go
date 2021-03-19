@@ -15,15 +15,17 @@ import (
 // Embed embeds the Secret's data into the source file and writes it to the output directory
 func Embed(secret *Secret) (string, error) {
 	var loadedImage image.Image
+	var format string
+	var err error
 	// Read the Source file
 	sourceFile, err := os.Open(secret.SourcePath)
 	if err != nil {
-		return "", fmt.Errorf("Error reading Source file: (%v)", err)
+		return "", fmt.Errorf("error reading Source file: (%v)", err)
 	}
 	defer sourceFile.Close()
-	loadedImage, format, err := image.Decode(sourceFile)
+	_, format, err = image.Decode(sourceFile)
 	if err != nil {
-		return "", fmt.Errorf("Error decoding source file: (%v)", err)
+		return "", fmt.Errorf("error decoding source file: (%v)", err)
 	}
 	// Reset the file's reader to beginning
 	sourceFile.Seek(0, 0)
@@ -36,20 +38,20 @@ func Embed(secret *Secret) (string, error) {
 		// ====
 		loadedImage, err = png.Decode(sourceFile)
 		if err != nil {
-			return "", fmt.Errorf("Error decoding PNG file: (%v)", err)
+			return "", fmt.Errorf("error decoding PNG file: (%v)", err)
 		}
 		embedded, err := EmbedMsgInImage(secret, loadedImage)
 		if err != nil {
-			return "", fmt.Errorf("Error embedding message in file: (%v)", err)
+			return "", fmt.Errorf("error embedding message in file: (%v)", err)
 		}
 		newFile, err := os.Create(filepath.Join(secret.OutputDir, "output."+format))
 		if err != nil {
-			return "", fmt.Errorf("Error creating output file: (%v)", err)
+			return "", fmt.Errorf("error creating output file: (%v)", err)
 		}
 		defer newFile.Close()
 		err = png.Encode(newFile, embedded)
 		if err != nil {
-			return "", fmt.Errorf("Error encoding new PNG image: (%v)", err)
+			return "", fmt.Errorf("error encoding new PNG image: (%v)", err)
 		}
 		return filepath.Join(secret.OutputDir, "output."+format), nil
 	} else if format == "jpeg" {
@@ -58,20 +60,20 @@ func Embed(secret *Secret) (string, error) {
 		// ====
 		loadedImage, err = jpeg.Decode(sourceFile)
 		if err != nil {
-			return "", fmt.Errorf("Error decoding JPEG file: (%v)", err)
+			return "", fmt.Errorf("error decoding JPEG file: (%v)", err)
 		}
 		embedded, err := EmbedMsgInImage(secret, loadedImage)
 		if err != nil {
-			return "", fmt.Errorf("Error embedding message in file: (%v)", err)
+			return "", fmt.Errorf("error embedding message in file: (%v)", err)
 		}
 		newFile, err := os.Create(filepath.Join(secret.OutputDir, "output_"+format+".png"))
 		if err != nil {
-			return "", fmt.Errorf("Error creating output file: (%v)", err)
+			return "", fmt.Errorf("error creating output file: (%v)", err)
 		}
 		defer newFile.Close()
 		err = png.Encode(newFile, embedded)
 		if err != nil {
-			return "", fmt.Errorf("Error encoding new JPEG image: (%v)", err)
+			return "", fmt.Errorf("error encoding new JPEG image: (%v)", err)
 		}
 		return filepath.Join(secret.OutputDir, "output_"+format+".png"), nil
 	} else if format == "bmp" {
@@ -80,20 +82,20 @@ func Embed(secret *Secret) (string, error) {
 		// ====
 		loadedImage, err = bmp.Decode(sourceFile)
 		if err != nil {
-			return "", fmt.Errorf("Error decoding BMP file: (%v)", err)
+			return "", fmt.Errorf("error decoding BMP file: (%v)", err)
 		}
 		embedded, err := EmbedMsgInImage(secret, loadedImage)
 		if err != nil {
-			return "", fmt.Errorf("Error embedding message in file: (%v)", err)
+			return "", fmt.Errorf("error embedding message in file: (%v)", err)
 		}
 		newFile, err := os.Create(filepath.Join(secret.OutputDir, "output."+format))
 		if err != nil {
-			return "", fmt.Errorf("Error creating output file: (%v)", err)
+			return "", fmt.Errorf("error creating output file: (%v)", err)
 		}
 		defer newFile.Close()
 		err = bmp.Encode(newFile, embedded)
 		if err != nil {
-			return "", fmt.Errorf("Error encoding new JPEG image: (%v)", err)
+			return "", fmt.Errorf("error encoding new JPEG image: (%v)", err)
 		}
 		return filepath.Join(secret.OutputDir, "output."+format), nil
 	} else if format == "gif" {
@@ -102,15 +104,15 @@ func Embed(secret *Secret) (string, error) {
 		// ====
 		loadedGIF, err := gif.DecodeAll(sourceFile)
 		if err != nil {
-			return "", fmt.Errorf("Error decoding GIF file: (%v)", err)
+			return "", fmt.Errorf("error decoding GIF file: (%v)", err)
 		}
 		embedded, err := EmbedMsgInGIF(secret, loadedGIF)
 		if err != nil {
-			return "", fmt.Errorf("Error embedding message in file: (%v)", err)
+			return "", fmt.Errorf("error embedding message in file: (%v)", err)
 		}
 		newFile, err := os.Create(filepath.Join(secret.OutputDir, "output."+format))
 		if err != nil {
-			return "", fmt.Errorf("Error creating output file: (%v)", err)
+			return "", fmt.Errorf("error creating output file: (%v)", err)
 		}
 		defer newFile.Close()
 		err = gif.EncodeAll(newFile, embedded)
@@ -121,7 +123,7 @@ func Embed(secret *Secret) (string, error) {
 		// =====
 		// Handle ???
 		// ====
-		return "", fmt.Errorf("Unsupported source file format: %v", format)
+		return "", fmt.Errorf("unsupported source file format: %v", format)
 	}
 	return "", nil
 }
@@ -132,12 +134,12 @@ func Extract(secret *Secret) error {
 	// Read the Source file
 	sourceFile, err := os.Open(secret.SourcePath)
 	if err != nil {
-		return fmt.Errorf("Error reading Source file: (%v)", err)
+		return fmt.Errorf("error reading Source file: (%v)", err)
 	}
 	defer sourceFile.Close()
 	_, format, err := image.Decode(sourceFile)
 	if err != nil {
-		return fmt.Errorf("Error decoding source file: (%v)", err)
+		return fmt.Errorf("error decoding source file: (%v)", err)
 	}
 	// Reset the file's reader to beginning
 	sourceFile.Seek(0, 0)
@@ -147,15 +149,15 @@ func Extract(secret *Secret) error {
 		// ====
 		loadedImage, err = png.Decode(sourceFile)
 		if err != nil {
-			return fmt.Errorf("Error decoding PNG file: (%v)", err)
+			return fmt.Errorf("error decoding PNG file: (%v)", err)
 		}
 		extracted, err := ExtractMsgFromImage(secret, loadedImage)
 		if err != nil {
-			return fmt.Errorf("Error extracting message from file: (%v)", err)
+			return fmt.Errorf("error extracting message from file: (%v)", err)
 		}
 		err = WriteFile(extracted.Message, extracted.OutputDir, extracted.DataHeader.Type)
 		if err != nil {
-			return fmt.Errorf("Error creating output file: (%v)", err)
+			return fmt.Errorf("error creating output file: (%v)", err)
 		}
 		return nil
 	} else if format == "jpeg" {
@@ -164,15 +166,15 @@ func Extract(secret *Secret) error {
 		// ====
 		loadedImage, err = jpeg.Decode(sourceFile)
 		if err != nil {
-			return fmt.Errorf("Error decoding JPEG file: (%v)", err)
+			return fmt.Errorf("error decoding JPEG file: (%v)", err)
 		}
 		extracted, err := ExtractMsgFromImage(secret, loadedImage)
 		if err != nil {
-			return fmt.Errorf("Error extracting message from file: (%v)", err)
+			return fmt.Errorf("error extracting message from file: (%v)", err)
 		}
 		err = WriteFile(extracted.Message, extracted.OutputDir, extracted.DataHeader.Type)
 		if err != nil {
-			return fmt.Errorf("Error creating output file: (%v)", err)
+			return fmt.Errorf("error creating output file: (%v)", err)
 		}
 		return nil
 	} else if format == "bmp" {
@@ -181,15 +183,15 @@ func Extract(secret *Secret) error {
 		// ====
 		loadedImage, err = bmp.Decode(sourceFile)
 		if err != nil {
-			return fmt.Errorf("Error decoding BMP file: (%v)", err)
+			return fmt.Errorf("error decoding BMP file: (%v)", err)
 		}
 		extracted, err := ExtractMsgFromImage(secret, loadedImage)
 		if err != nil {
-			return fmt.Errorf("Error extracting message from file: (%v)", err)
+			return fmt.Errorf("error extracting message from file: (%v)", err)
 		}
 		err = WriteFile(extracted.Message, extracted.OutputDir, extracted.DataHeader.Type)
 		if err != nil {
-			return fmt.Errorf("Error creating output file: (%v)", err)
+			return fmt.Errorf("error creating output file: (%v)", err)
 		}
 		return nil
 	} else if format == "gif" {
@@ -198,20 +200,20 @@ func Extract(secret *Secret) error {
 		// ====
 		loadedGIF, err := gif.DecodeAll(sourceFile)
 		if err != nil {
-			return fmt.Errorf("Error decoding GIF file: (%v)", err)
+			return fmt.Errorf("error decoding GIF file: (%v)", err)
 		}
 		extracted, err := ExtractMsgFromGif(secret, loadedGIF)
 		if err != nil {
-			return fmt.Errorf("Error extracting message from file: (%v)", err)
+			return fmt.Errorf("error extracting message from file: (%v)", err)
 		}
 		err = WriteFile(extracted.Message, extracted.OutputDir, extracted.DataHeader.Type)
 		if err != nil {
-			return fmt.Errorf("Error creating output file: (%v)", err)
+			return fmt.Errorf("error creating output file: (%v)", err)
 		}
 		return nil
 	}
 	// =====
 	// Handle ???
 	// ====
-	return fmt.Errorf("Unsupported source file format: %v", format)
+	return fmt.Errorf("unsupported source file format: %v", format)
 }

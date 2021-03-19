@@ -28,7 +28,7 @@ type endpoint struct {
 // Embed stores input data from the UI
 type Embed struct {
 	Message   string `schema:"message"`
-	PreEncode string `schema:"pre_encode"`
+	PreEncode string `schema:"pre_encoding"`
 }
 
 func endpoints(logger *zap.SugaredLogger) []endpoint {
@@ -89,7 +89,9 @@ func handleEmbedMessage(logger *zap.SugaredLogger) http.HandlerFunc {
 			logger.Errorf("err saving temporary file: %v", err)
 		}
 		tempFile.Close()
+
 		input := &Embed{}
+
 		err = schema.NewDecoder().Decode(input, r.Form)
 		if err != nil {
 			logger.Errorf("err decoding form data: %v", err)
@@ -129,7 +131,7 @@ func handleEmbedMessage(logger *zap.SugaredLogger) http.HandlerFunc {
 		if err != nil {
 			logger.Errorf("err writing output to response: %v", err)
 		}
-		return
+		logger.Infof("finished embed message")
 	}
 }
 

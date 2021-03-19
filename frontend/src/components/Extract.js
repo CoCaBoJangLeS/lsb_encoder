@@ -3,7 +3,7 @@ import ExtractUpload from './ExtractUpload'
 
 function Extract() {
   return (
-    <div className="App">
+    <div className='App'>
       <ExtractUpload />
     </div>
   )

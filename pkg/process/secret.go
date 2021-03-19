@@ -107,7 +107,7 @@ func ParseEmbedSecret(f *Flags) (*Secret, error) {
 		// Pull the message from Stdin
 		bytes, err := ioutil.ReadAll(os.Stdin)
 		if err != nil {
-			return s, fmt.Errorf("Error reading from Stdin: (%v)", err)
+			return s, fmt.Errorf("error reading from Stdin: (%v)", err)
 		}
 		msg = string(bytes)
 	} else if f.MessageFile != "" {
@@ -115,7 +115,7 @@ func ParseEmbedSecret(f *Flags) (*Secret, error) {
 		// Read the message from the filepath
 		bytes, err := ioutil.ReadFile(f.MessageFile)
 		if err != nil {
-			return s, fmt.Errorf("Error reading Message input file: (%v)", err)
+			return s, fmt.Errorf("error reading Message input file: (%v)", err)
 		}
 		msg = string(bytes)
 		header.Type = filepath.Ext(f.MessageFile)
@@ -128,7 +128,7 @@ func ParseEmbedSecret(f *Flags) (*Secret, error) {
 	if f.Complex != "" {
 		typs := strings.Split(f.Complex, ",")
 		if len(typs) > 5 {
-			return s, fmt.Errorf("Too many --complex pre-encoders, maximum of 5")
+			return s, fmt.Errorf("too many --complex pre-encoders, maximum of 5")
 		}
 		for _, typ := range typs {
 			encoder, err := encoders.EncTypeFromString(typ)

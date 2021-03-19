@@ -7,7 +7,7 @@ import Button from './Button'
 
 function Embed() {
   return (
-    <div className="App">
+    <div>
       <h1>Embed a Message</h1>
       <Upload />
       <Text />
